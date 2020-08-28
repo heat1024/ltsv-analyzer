@@ -12,6 +12,10 @@ import (
 	"strings"
 )
 
+const (
+	bufferSize = 4096
+)
+
 type result struct {
 	sum   uint64
 	avg   uint64
@@ -36,7 +40,7 @@ func ltsvAnalyze(tFile []string) (map[string]*result, []sortedKey, error) {
 		isCompressed = false
 
 		// read first 512 bytes for detect contents type.
-		// why 512? ref : https://golang.org/pkg/net/http/#DetectContentType
+		// why 512 bytes? ref : https://golang.org/pkg/net/http/#DetectContentType
 		buf := make([]byte, 512)
 		_, err = logFile.Read(buf)
 		if err != nil {
@@ -64,8 +68,7 @@ func ltsvAnalyze(tFile []string) (map[string]*result, []sortedKey, error) {
 		var n int
 
 		for {
-			// line, err := r.ReadString('\n')
-			buff := make([]byte, 4096)
+			buff := make([]byte, bufferSize)
 			if isCompressed {
 				n, err = zr.Read(buff)
 			} else {
@@ -151,7 +154,7 @@ func ltsvAnalyze(tFile []string) (map[string]*result, []sortedKey, error) {
 		case "AVG":
 			resultKeys = append(resultKeys, sortedKey{key, value.avg})
 			break
-		case "CNT":
+		case "CNT", "COUNT":
 			resultKeys = append(resultKeys, sortedKey{key, value.count})
 			break
 		}
