@@ -10,11 +10,11 @@ BUILDDATE=$(date '+%Y/%m/%d %H:%M:%S %Z')
 ME=$(whoami)
 
 # delete previous builded pkg
-rm -rf pkg && mkdir pkg && mkdir pkg/linux_amd64 && mkdir pkg/darwin_amd64
+rm -rf pkg && mkdir pkg
 
 # build mac version
 echo "build mac os binary $XC_NAME"
-GO111MODULE=on gox -os "darwin" -arch "$XC_ARCH" -osarch "!darwin/arm" -ldflags "-X main.version=$VERSION -X main.revision=$REVISION -X \"main.goversion=$GOVERSION\" -X \"main.builddate=$BUILDDATE\" -X \"main.builduser=$ME\"" -output "pkg/{{.OS}}_{{.Arch}}/$XC_NAME" .
+GO111MODULE=on gox -os "darwin" -arch "$XC_ARCH" -osarch "!darwin/arm" -ldflags "-X main.version=$VERSION -X main.revision=$REVISION -X \"main.goversion=$GOVERSION\" -X \"main.builddate=$BUILDDATE\" -X \"main.builduser=$ME\"" -output "pkg/darwin_${XC_ARCH}_${XC_NAME}" .
 
 # build linux version
 # if build linux version on mac os, use docker for build
@@ -23,5 +23,5 @@ echo "build linux binary in docker linux"
 docker run --rm -v `pwd`:/go/src/$XC_NAME -w /go/src/$XC_NAME golang:1.12.1 /go/src/$XC_NAME/misc/build-linux-binary.sh
 else
 echo "build linux binary $XC_NAME"
-GO111MODULE=on gox -os "linux" -arch "$XC_ARCH" -osarch "!darwin/arm" -ldflags "-X main.version=$VERSION -X main.revision=$REVISION -X \"main.goversion=$GOVERSION\" -X \"main.builddate=$BUILDDATE\" -X \"main.builduser=$ME\"" -output "pkg/{{.OS}}_{{.Arch}}/$XC_NAME" .
+GO111MODULE=on gox -os "linux" -arch "$XC_ARCH" -osarch "!darwin/arm" -ldflags "-X main.version=$VERSION -X main.revision=$REVISION -X \"main.goversion=$GOVERSION\" -X \"main.builddate=$BUILDDATE\" -X \"main.builduser=$ME\"" -output "pkg/linux_${XC_ARCH}_${XC_NAME}" .
 fi
