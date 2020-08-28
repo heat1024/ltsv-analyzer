@@ -1,6 +1,7 @@
 TEST ?= $(shell $(GO) list ./... | grep -v vendor)
 VERSION = $(shell cat version)
 REVISION = $(shell git describe --always)
+BRANCH = $(shell git branch --show-current)
 
 INFO_COLOR=\033[1;34m
 RESET=\033[0m
@@ -27,12 +28,12 @@ build: ## Build for release (default)
 	./misc/build $(VERSION) $(REVISION)
 
 ghr: ## Upload to Github releases without github token check
-ifeq 'master' '$(git branch --show-current)'
+ifeq 'master' '$(BRANCH)'
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Releasing for Github$(RESET)"
-	ghr -u heat1024 v$(VERSION)-$(REVISION) pkg
+	# ghr -u heat1024 v$(VERSION)-$(REVISION) pkg
 else
 	@echo "$(INFO_COLOR)==> $(RESET)$(BOLD)Releasing for Github$(RESET)"
-	ghr -u heat1024 -prerelease -recreate v$(VERSION)-manual-latest pkg
+	# ghr -u heat1024 -prerelease -recreate v$(VERSION)-manual-latest pkg
 endif
 
 dist: build ## Upload to Github releases
