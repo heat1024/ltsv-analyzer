@@ -36,7 +36,7 @@ else
 endif
 
 dist: build ## Upload to Github releases
-	@test -z $(GITHUB_TOKEN) || test -z $(GITHUB_API) || $(MAKE) ghr
+	@test -z $(GITHUB_TOKEN) || $(MAKE) ghr
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "$(INFO_COLOR)%-30s$(RESET) %s\n", $$1, $$2}'
