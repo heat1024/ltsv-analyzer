@@ -20,8 +20,10 @@ ltsv-analyzer [OPTIONS] {PATH1} {PATH2} ... (default path : ./logs)
   --help[-h|H]      : show usage
 ```
 
-#### example
+## example
 
+
+### default operation
 
 - default. want to get log counter by each hosts
 
@@ -35,7 +37,23 @@ bbb.com                   3
 aaa.com                   2
 ```
 
-- want to get total / average bytes_sent and counter by each client ips
+### show sum of target value
+
+- want to get total & counter bytes_sent by each user
+
+```
+$ ./ltsv-analyzer -B user -T bytes_sent -O sum,cnt ./testlog.log
+
+Print results by BASE KEY [user] and TARGET KEY [bytes_sent]
+user     SUM(bytes_sent)         LOG COUNTER
+--------------------------------------------
+bbb             1135148                   3
+aaa               12656                   2
+```
+
+### show all datas about base key and target value
+
+- want to get whole data (total / average bytes_sent and counter) by each client ips
 
 ```
 # ./ltsv-analyzer -B ip -T bytes_sent -O all ./testlog.log
@@ -48,14 +66,30 @@ Print results by BASE KEY [ip] and TARGET KEY bytes_sent
 1.1.1.4             1123419             1123419                   1
 ```
 
-- want to get total & counter bytes_sent by each user
+### sorting
+
+- want to sort by sum column (default : descending)
 
 ```
-$ ./ltsv-analyzer -B user -T bytes_sent -O sum,cnt ./testlog.log
+❯ ./ltsv-analyzer --base ip --target bytes_sent --operation all --sort sum  ./testlog.log
 
-Print results by BASE KEY [user] and TARGET KEY [bytes_sent]
-user     SUM(bytes_sent)         LOG COUNTER
---------------------------------------------
-bbb             1135148                   3
-aaa               12656                   2
+Print results by BASE KEY [ip] and TARGET KEY [bytes_sent]
+ ip         SUM(bytes_sent)     AVG(bytes_sent)         LOG COUNTER
+-------------------------------------------------------------------
+1.1.1.4             1123419             1123419                   1
+1.1.1.1               12656                6328                   2
+1.1.1.2               11729                5864                   2
+```
+
+- if want ascending sort, just add --rev(-r|-R) option
+
+```
+❯ ./ltsv-analyzer --base ip --target bytes_sent --operation all --sort sum --rev  ./testlog.log
+
+Print results by BASE KEY [ip] and TARGET KEY [bytes_sent]
+ ip         SUM(bytes_sent)     AVG(bytes_sent)         LOG COUNTER
+-------------------------------------------------------------------
+1.1.1.2               11729                5864                   2
+1.1.1.1               12656                6328                   2
+1.1.1.4             1123419             1123419                   1
 ```
