@@ -1,0 +1,5 @@
+user:aaa	host:aaa.com	response_time:2.012	ip:1.1.1.1	bytes_sent:10224	time:2020/08/28 13:57:32
+user:bbb	host:bbb.com	response_time:1.338	ip:1.1.1.2	bytes_sent:5047	time:2020/08/28 13:57:36
+user:aaa	host:aaa.com	response_time:5.132	ip:1.1.1.1	bytes_sent:2432	time:2020/08/28 13:59:59
+user:bbb	host:bbb.com	response_time:1.243	ip:1.1.1.4	bytes_sent:1123419	time:2020/08/28 14:02:32
+user:bbb	host:bbb.com	response_time:4.009	ip:1.1.1.2	bytes_sent:6682	time:2020/08/28 14:02:33
