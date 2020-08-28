@@ -25,10 +25,3 @@ else
 echo "build linux binary $XC_NAME"
 GO111MODULE=on gox -os "linux" -arch "$XC_ARCH" -osarch "!darwin/arm" -ldflags "-X main.version=$VERSION -X main.revision=$REVISION -X \"main.goversion=$GOVERSION\" -X \"main.builddate=$BUILDDATE\" -X \"main.builduser=$ME\"" -output "pkg/{{.OS}}_{{.Arch}}/$XC_NAME" .
 fi
-
-for PLATFORM in $(find ./pkg -mindepth 1 -maxdepth 1 -type d); do
-  OSARCH=$(basename $PLATFORM)
-  pushd ${PLATFORM} >/dev/null 2>&1
-  zip ../${OSARCH}_${XC_NAME}.zip ./${XC_NAME}
-  popd >/dev/null 2>&1
-done
