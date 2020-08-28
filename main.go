@@ -117,7 +117,7 @@ func init() {
 				os.Exit(1)
 			}
 			break
-		case "-r", "-R":
+		case "--rev", "-r", "-R":
 			reverseSort = true
 			break
 		case "--help", "-h", "-H":
