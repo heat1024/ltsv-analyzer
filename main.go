@@ -134,6 +134,8 @@ func Usage() {
 	fmt.Println("How to use web-proxy log analyzer")
 	fmt.Println("ltsv-analyzer [OPTIONS] {PATH1} {PATH2} ... (default path : ./logs)")
 	fmt.Println()
+	fmt.Println("if [PATH] not defined, use stdin.")
+	fmt.Println()
 	fmt.Println("- OPTIONS")
 	fmt.Println("    --base[-B]      : set base key")
 	fmt.Println("    --target[-T]    : set target key")
