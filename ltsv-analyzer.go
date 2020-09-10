@@ -32,36 +32,50 @@ func ltsvAnalyze(tFile []string) (map[string]*result, []sortedKey, error) {
 	var resultKeys []sortedKey
 	var isCompressed bool
 
+	if len(tFiles) == 0 {
+		tFiles = append(tFiles, "STDIN")
+	}
+
 	for _, file := range tFiles {
-		logFile, err := os.OpenFile(file, os.O_RDONLY, 0400)
-		if err != nil {
-			return nil, nil, fmt.Errorf("cannot open log file %s: %s", file, err.Error())
-		}
-		isCompressed = false
-
-		// read first 512 bytes for detect contents type.
-		// why 512 bytes? ref : https://golang.org/pkg/net/http/#DetectContentType
-		buf := make([]byte, 512)
-		_, err = logFile.Read(buf)
-		if err != nil {
-			return nil, nil, fmt.Errorf("cannot read file header: %s", err.Error())
-		}
-		logFile.Seek(0, 0)
-
-		filetype := http.DetectContentType(buf)
+		var logFile *os.File
 		var r *bufio.Reader
 		var zr *gzip.Reader
+		var err error
 
-		switch filetype {
-		case "application/x-gzip":
-			zr, err = gzip.NewReader(logFile)
-			if err != nil {
-				return nil, nil, fmt.Errorf("cannot create gzip reader for %s: %s", file, err.Error())
-			}
-			isCompressed = true
-		default:
+		logFile = nil
+
+		if file == "STDIN" {
 			isCompressed = false
-			r = bufio.NewReader(logFile)
+			r = bufio.NewReader(os.Stdin)
+		} else {
+			logFile, err = os.OpenFile(file, os.O_RDONLY, 0400)
+			if err != nil {
+				return nil, nil, fmt.Errorf("cannot open log file %s: %s", file, err.Error())
+			}
+			isCompressed = false
+
+			// read first 512 bytes for detect contents type.
+			// why 512 bytes? ref : https://golang.org/pkg/net/http/#DetectContentType
+			buf := make([]byte, 512)
+			_, err = logFile.Read(buf)
+			if err != nil {
+				return nil, nil, fmt.Errorf("cannot read file header: %s", err.Error())
+			}
+			logFile.Seek(0, 0)
+
+			filetype := http.DetectContentType(buf)
+
+			switch filetype {
+			case "application/x-gzip":
+				zr, err = gzip.NewReader(logFile)
+				if err != nil {
+					return nil, nil, fmt.Errorf("cannot create gzip reader for %s: %s", file, err.Error())
+				}
+				isCompressed = true
+			default:
+				isCompressed = false
+				r = bufio.NewReader(logFile)
+			}
 		}
 
 		var leftLine string
@@ -80,6 +94,10 @@ func ltsvAnalyze(tFile []string) (map[string]*result, []sortedKey, error) {
 					zr.Close()
 				}
 				return nil, nil, fmt.Errorf("got error during read %s: %s", file, err.Error())
+			}
+
+			if logFile == nil && (string(buff[:n]) == "done\n" || string(buff[:n]) == "exit\n") {
+				break
 			}
 
 			leftLine += string(buff[:n])
@@ -143,7 +161,9 @@ func ltsvAnalyze(tFile []string) (map[string]*result, []sortedKey, error) {
 		if isCompressed {
 			zr.Close()
 		}
-		logFile.Close()
+		if logFile != nil {
+			logFile.Close()
+		}
 	}
 
 	for key, value := range results {
