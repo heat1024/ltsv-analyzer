@@ -166,7 +166,6 @@ func printResult(results map[string]*result, resultKeys []sortedKey) {
 	// set base key string by base key's length
 	baseKeyString := fmt.Sprintf(fmt.Sprintf("%%-%ds", maxKeyLength), fmt.Sprintf(fmt.Sprintf("%%-%ds", maxKeyLength/2), fmt.Sprintf(fmt.Sprintf("%%%ds", maxKeyLength/2), baseKey)))
 
-	fmt.Println()
 	if targetKey == "" {
 		fmt.Printf("Print LOG COUNTER by BASE KEY [%s]\n", baseKey)
 		operation = counter
