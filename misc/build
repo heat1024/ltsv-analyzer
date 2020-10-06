@@ -14,7 +14,7 @@ rm -rf pkg && mkdir pkg
 
 # build mac version
 echo "build mac os binary $XC_NAME"
-GO111MODULE=on gox -os "darwin" -arch "$XC_ARCH" -osarch "!darwin/arm" -ldflags "-X main.version=$VERSION -X main.revision=$REVISION -X \"main.goversion=$GOVERSION\" -X \"main.builddate=$BUILDDATE\" -X \"main.builduser=$ME\"" -output "pkg/darwin_${XC_ARCH}_${XC_NAME}" .
+GO111MODULE=on gox -os "darwin" -arch "$XC_ARCH" -osarch "!darwin/arm" -ldflags "-X main.version=$VERSION -X main.revision=$REVISION -X \"main.goversion=$GOVERSION\" -X \"main.builddate=$BUILDDATE\" -X \"main.builduser=$ME\"" -output "pkg/mac_${XC_ARCH}_${XC_NAME}" .
 
 # build linux version
 # if build linux version on mac os, use docker for build
